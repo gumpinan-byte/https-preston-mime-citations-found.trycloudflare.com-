@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoWale AI - Find Right Cars, On-Road Prices in INR & Car Lens AI</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white">
+
+  <!-- ==================== STICKY NAVBAR ==================== -->
+  <nav class="sticky top-0 z-50 glass-nav border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-3 group">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-amber-400 p-0.5 shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+            <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+              <i data-lucide="car" class="w-6 h-6 text-sky-400"></i>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-2xl font-black tracking-tight text-white brand-font">Auto<span class="text-sky-400">Wale</span></span>
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-sky-500/20 text-sky-400 border border-sky-500/30">AI</span>
+            </div>
+            <p class="text-[10px] text-slate-400 font-medium tracking-wide">India's Smart Automotive Portal</p>
+          </div>
+        </a>
+
+        <!-- Location & Quick Nav Links -->
+        <div class="hidden lg:flex items-center gap-6 text-sm font-medium">
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs">
+            <i data-lucide="map-pin" class="w-4 h-4 text-sky-400"></i>
+            <span class="text-slate-400">City:</span>
+            <select id="navbar-city-select" class="bg-transparent text-white font-bold outline-none cursor-pointer">
+              <option value="Delhi" class="bg-slate-900">Delhi NCR</option>
+              <option value="Mumbai" class="bg-slate-900">Mumbai</option>
+              <option value="Bengaluru" class="bg-slate-900">Bengaluru</option>
+              <option value="Chennai" class="bg-slate-900">Chennai</option>
+              <option value="Hyderabad" class="bg-slate-900">Hyderabad</option>
+              <option value="Kolkata" class="bg-slate-900">Kolkata</option>
+            </select>
+          </div>
+
+          <a href="#catalog-section" class="text-slate-300 hover:text-sky-400 transition-colors">Explore Cars</a>
+          <a href="#hero-lens-section" class="text-slate-300 hover:text-sky-400 flex items-center gap-1.5 transition-colors">
+            <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i> Car Lens AI
+          </a>
+          <a href="#catalog-section" onclick="SearchFilter.setQuickTag('electric')" class="text-slate-300 hover:text-sky-400 transition-colors">Electric EVs</a>
+        </div>
+
+        <!-- Right Side: Car Lens Launch & User Auth -->
+        <div class="flex items-center gap-3">
+          <a href="#hero-lens-section" 
+            class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-sky-600/30 to-indigo-600/30 border border-sky-500/40 text-sky-300 hover:text-white hover:border-sky-400 text-xs font-bold transition-all shadow-md shadow-sky-950">
+            <i data-lucide="camera" class="w-4 h-4 text-sky-400"></i>
+            <span>Car Lens (AI Detect)</span>
+          </a>
+
+          <div id="navbar-auth-container" class="flex items-center gap-2">
+            <!-- Rendered dynamically by auth.js -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==================== HERO SECTION & OPEN SEARCH BAR ==================== -->
+  <header class="relative overflow-hidden pt-12 pb-20 border-b border-slate-900">
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-sky-600/15 blur-[120px] rounded-full pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="text-center max-w-3xl mx-auto space-y-4">
+        
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-sky-500/30 text-xs font-semibold text-sky-300 shadow-xl backdrop-blur-md">
+          <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+          <span>Latest 2024–2026 Indian Car Models Loaded with Real-time Prices in ₹</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
+          Find Your <span class="bg-gradient-to-r from-sky-400 via-indigo-300 to-amber-300 bg-clip-text text-transparent">Right Car</span> with AI
+        </h1>
+        
+        <p class="text-slate-400 text-base sm:text-lg">
+          Search latest cars, calculate on-road prices in Indian Rupees (₹), multi-filter by price, fuel type, transmission, and use <strong>Car Lens AI</strong> to identify new/used cars from photos.
+        </p>
+
+        <!-- OPEN SEARCH BAR -->
+        <div class="pt-4 max-w-2xl mx-auto">
+          <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-sky-500 to-indigo-600 rounded-2xl blur-md opacity-30 group-hover:opacity-60 transition duration-300"></div>
+            
+            <div class="relative flex items-center bg-slate-900 border border-slate-700/80 focus-within:border-sky-500 rounded-2xl shadow-2xl p-2 transition-all">
+              <div class="pl-3 pr-2 text-slate-400">
+                <i data-lucide="search" class="w-6 h-6 text-sky-400"></i>
+              </div>
+              <input type="text" id="global-search-input" 
+                placeholder="Search by car name, brand, budget, e.g. 'Tata Curvv', 'Creta Diesel', 'EV under 20 Lakh'..."
+                class="w-full bg-transparent text-white placeholder-slate-500 text-sm md:text-base px-2 py-2.5 outline-none font-medium">
+              
+              <button onclick="SearchFilter.fetchAndRender()" 
+                class="px-5 py-3 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold text-xs md:text-sm rounded-xl transition-all shadow-lg shadow-sky-600/30 flex items-center gap-2 shrink-0">
+                <span>Search</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Category Tags -->
+          <div class="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs">
+            <button onclick="SearchFilter.setQuickTag('all')" data-tag="all" class="quick-tag-btn px-3.5 py-1.5 rounded-full bg-sky-600 text-white shadow-lg shadow-sky-600/30 font-semibold transition-all">
+              All Cars
+            </button>
+            <button onclick="SearchFilter.setQuickTag('new')" data-tag="new" class="quick-tag-btn px-3.5 py-1.5 rounded-full bg-slate-800/80 text-slate-300 hover:bg-slate-700 font-semibold transition-all border border-slate-700">
+              🔥 2024 New Launches
+            </button>
+            <button onclick="SearchFilter.setQuickTag('electric')" data-tag="electric" class="quick-tag-btn px-3.5 py-1.5 rounded-full bg-slate-800/80 text-slate-300 hover:bg-slate-700 font-semibold transition-all border border-slate-700">
+              ⚡ Electric EVs
+            </button>
+            <button onclick="SearchFilter.setQuickTag('suv')" data-tag="suv" class="quick-tag-btn px-3.5 py-1.5 rounded-full bg-slate-800/80 text-slate-300 hover:bg-slate-700 font-semibold transition-all border border-slate-700">
+              🚙 SUVs & Coupes
+            </button>
+            <button onclick="SearchFilter.setQuickTag('budget10')" data-tag="budget10" class="quick-tag-btn px-3.5 py-1.5 rounded-full bg-slate-800/80 text-slate-300 hover:bg-slate-700 font-semibold transition-all border border-slate-700">
+              💰 Under ₹ 10 Lakh
+            </button>
+            <button onclick="SearchFilter.setQuickTag('7seater')" data-tag="7seater" class="quick-tag-btn px-3.5 py-1.5 rounded-full bg-slate-800/80 text-slate-300 hover:bg-slate-700 font-semibold transition-all border border-slate-700">
+              👨‍👩‍👧‍👦 7-Seaters
+            </button>
+            <button onclick="SearchFilter.setQuickTag('luxury')" data-tag="luxury" class="quick-tag-btn px-3.5 py-1.5 rounded-full bg-slate-800/80 text-slate-300 hover:bg-slate-700 font-semibold transition-all border border-slate-700">
+              👑 Luxury (BMW/Mercedes)
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== CAR LENS AI SECTION ==================== -->
+  <section id="hero-lens-section" class="py-16 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold mb-2">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Google Lens for Cars (AI Vision)
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            Car Lens AI <span class="text-sky-400">Scanner</span>
+          </h2>
+          <p class="text-slate-400 text-sm mt-1">
+            Upload or snapshot any car picture. AI detects if it is a <strong>New Car</strong> or <strong>Used Car</strong>, scores its condition, and estimates its market price in Indian Rupees (₹).
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 text-xs text-slate-400 bg-slate-900/90 px-3.5 py-2 rounded-xl border border-slate-800">
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+          <span>Instant Ex-Showroom & Used Resale Valuation</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Upload Zone -->
+        <div class="lg:col-span-5">
+          <div id="lens-drop-zone" class="glass-card rounded-3xl p-8 border-2 border-dashed border-slate-700 hover:border-sky-500/80 cursor-pointer text-center group transition-all duration-300">
+            <input type="file" id="lens-file-input" accept="image/*" class="hidden">
+            
+            <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white shadow-xl shadow-sky-600/30 group-hover:scale-110 transition-transform duration-300 mb-5">
+              <i data-lucide="camera" class="w-10 h-10"></i>
+            </div>
+
+            <h3 class="text-xl font-bold text-white mb-1.5">Drop Car Photo or Click to Upload</h3>
+            <p class="text-xs text-slate-400 max-w-xs mx-auto mb-5 leading-relaxed">
+              Supports JPEG, PNG, WebP. High accuracy identification for Indian cars & used models.
+            </p>
+
+            <div class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 group-hover:bg-sky-500 text-white font-bold text-xs shadow-lg shadow-sky-600/25 transition-colors">
+              <i data-lucide="upload" class="w-4 h-4"></i>
+              <span>Choose Image from Device</span>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-800 text-left" onclick="event.stopPropagation()">
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">
+                Car Model (Optional Hint for 100% Exact Match):
+              </label>
+              <select id="lens-model-hint" class="w-full bg-slate-900 border border-slate-700 hover:border-sky-500/80 rounded-xl px-3 py-2 text-xs text-white outline-none cursor-pointer font-medium">
+                <option value="">⚡ Auto-Detect with AI Vision</option>
+                <option value="mahindra-thar-roxx">Mahindra Thar Roxx 4x4 (5-Door)</option>
+                <option value="tata-curvv">Tata Curvv (SUV Coupe)</option>
+                <option value="tata-curvv-ev">Tata Curvv EV (Electric Coupe)</option>
+                <option value="hyundai-creta">Hyundai Creta (2024 Facelift)</option>
+                <option value="maruti-suzuki-swift">Maruti Suzuki Swift (2024 New Gen)</option>
+                <option value="toyota-fortuner">Toyota Fortuner 4x4 Legender</option>
+                <option value="mahindra-xuv700">Mahindra XUV700 (AX7 Luxury)</option>
+                <option value="mahindra-scorpio-n">Mahindra Scorpio-N (Z8L)</option>
+                <option value="toyota-innova-hycross">Toyota Innova Hycross Hybrid</option>
+                <option value="tata-nexon">Tata Nexon (2024 Facelift)</option>
+                <option value="kia-seltos">Kia Seltos (2024 Facelift)</option>
+                <option value="maruti-suzuki-grand-vitara">Maruti Suzuki Grand Vitara</option>
+                <option value="tata-punch-ev">Tata Punch EV</option>
+                <option value="mahindra-xuv-3xo">Mahindra XUV 3XO</option>
+                <option value="hyundai-verna">Hyundai Verna Turbo</option>
+                <option value="mg-windsor-ev">MG Windsor EV</option>
+                <option value="byd-seal">BYD Seal Electric Sedan</option>
+                <option value="bmw-3-series-gran-limousine">BMW 3 Series Gran Limousine</option>
+                <option value="mercedes-benz-c-class">Mercedes-Benz C-Class</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sample Car Photo Selector -->
+        <div class="lg:col-span-7">
+          <div class="glass-card rounded-3xl p-6 border border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Quick Test Samples</h4>
+                <p class="text-xs text-slate-400">Click any sample image to test AI detection instantly:</p>
+              </div>
+              <span class="text-[11px] font-semibold text-sky-400 bg-sky-950/60 px-2.5 py-1 rounded-lg border border-sky-800">6 Preloaded Cars</span>
+            </div>
+
+            <div id="lens-sample-gallery" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <!-- Loaded via car_lens.js -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SCANNER RADAR VIEW -->
+      <div id="lens-scanner-view" class="hidden mt-8 max-w-2xl mx-auto glass-card rounded-3xl p-6 border border-sky-500/50 shadow-2xl shadow-sky-950 text-center animate-fadeIn">
+        <div class="relative w-full h-80 rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 mb-6">
+          <img id="lens-scan-preview-img" src="" class="w-full h-full object-cover">
+          <div class="radar-scanner-line"></div>
+          
+          <div class="absolute inset-8 border-2 border-sky-400/80 rounded-2xl lens-target-box pointer-events-none flex items-center justify-center">
+            <span class="text-xs font-mono font-bold text-sky-300 bg-slate-950/80 px-3 py-1 rounded-full border border-sky-400/40">
+              AI DETECTING VEHICLE...
+            </span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-center gap-3">
+          <div class="inline-block animate-spin w-5 h-5 border-2 border-sky-400 border-t-transparent rounded-full"></div>
+          <span id="lens-scan-status-text" class="text-sm font-semibold text-sky-300">Scanning car body silhouette & contours...</span>
+        </div>
+      </div>
+
+      <!-- SCAN RESULT VIEW -->
+      <div id="lens-result-view" class="hidden mt-8 max-w-5xl mx-auto">
+        <!-- Rendered dynamically by car_lens.js -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== MAIN CATALOG & MULTI-FILTER SECTION ==================== -->
+  <main id="catalog-section" class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- LEFT FILTER SIDEBAR -->
+      <aside class="lg:col-span-3 space-y-6">
+        <div class="glass-card rounded-3xl p-6 border border-slate-800 space-y-6 sticky top-24">
+          
+          <!-- Filter Header -->
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="sliders-horizontal" class="w-5 h-5 text-sky-400"></i> Filters
+            </h3>
+            <button onclick="SearchFilter.resetFilters()" class="text-xs font-semibold text-sky-400 hover:text-sky-300 transition-colors">
+              Reset All
+            </button>
+          </div>
+
+          <!-- Price Range Slider in Indian Rupees -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center text-xs font-bold uppercase tracking-wider">
+              <span class="text-slate-300">Price Range (₹)</span>
+              <span id="price-slider-display" class="text-sky-400">Up to ₹ 1.00+ Crore</span>
+            </div>
+            
+            <input type="range" id="price-range-slider" min="500000" max="10000000" step="100000" value="10000000" class="w-full">
+            
+            <div class="flex justify-between text-[10px] text-slate-500 font-semibold">
+              <span>₹ 5 Lakh</span>
+              <span>₹ 50 Lakh</span>
+              <span>₹ 1.0+ Cr</span>
+            </div>
+
+            <!-- Price Presets -->
+            <div class="grid grid-cols-2 gap-1.5 pt-1">
+              <button type="button" onclick="SearchFilter.setPricePreset(0, 800000, this)" class="price-preset-btn py-1.5 px-2 text-[11px] font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                Under ₹ 8L
+              </button>
+              <button type="button" onclick="SearchFilter.setPricePreset(800000, 1500000, this)" class="price-preset-btn py-1.5 px-2 text-[11px] font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                ₹ 8L - ₹ 15L
+              </button>
+              <button type="button" onclick="SearchFilter.setPricePreset(1500000, 2500000, this)" class="price-preset-btn py-1.5 px-2 text-[11px] font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                ₹ 15L - ₹ 25L
+              </button>
+              <button type="button" onclick="SearchFilter.setPricePreset(2500000, 5000000, this)" class="price-preset-btn py-1.5 px-2 text-[11px] font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                ₹ 25L - ₹ 50L
+              </button>
+              <button type="button" onclick="SearchFilter.setPricePreset(5000000, 10000000, this)" class="price-preset-btn py-1.5 px-2 text-[11px] font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all col-span-2">
+                Luxury Above ₹ 50 Lakh
+              </button>
+            </div>
+          </div>
+
+          <!-- Fuel Type Filter -->
+          <div class="space-y-2.5 pt-4 border-t border-slate-800">
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="fuel" class="w-4 h-4 text-sky-400"></i> Fuel Type
+            </label>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="SearchFilter.setFuelFilter('all', this)" class="fuel-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-sky-600 text-white border border-sky-500 transition-all">
+                All
+              </button>
+              <button type="button" onclick="SearchFilter.setFuelFilter('Petrol', this)" class="fuel-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                Petrol
+              </button>
+              <button type="button" onclick="SearchFilter.setFuelFilter('Diesel', this)" class="fuel-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                Diesel
+              </button>
+              <button type="button" onclick="SearchFilter.setFuelFilter('Electric', this)" class="fuel-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all flex items-center gap-1">
+                ⚡ EV
+              </button>
+              <button type="button" onclick="SearchFilter.setFuelFilter('Hybrid', this)" class="fuel-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                Hybrid
+              </button>
+              <button type="button" onclick="SearchFilter.setFuelFilter('CNG', this)" class="fuel-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                CNG
+              </button>
+            </div>
+          </div>
+
+          <!-- Transmission Filter -->
+          <div class="space-y-2.5 pt-4 border-t border-slate-800">
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="cog" class="w-4 h-4 text-amber-400"></i> Transmission
+            </label>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="SearchFilter.setTransmissionFilter('all', this)" class="trans-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-sky-600 text-white border border-sky-500 transition-all">
+                All
+              </button>
+              <button type="button" onclick="SearchFilter.setTransmissionFilter('Manual', this)" class="trans-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                Manual
+              </button>
+              <button type="button" onclick="SearchFilter.setTransmissionFilter('Automatic', this)" class="trans-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                Automatic
+              </button>
+              <button type="button" onclick="SearchFilter.setTransmissionFilter('DCA', this)" class="trans-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                DCT / DCA
+              </button>
+              <button type="button" onclick="SearchFilter.setTransmissionFilter('CVT', this)" class="trans-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                CVT
+              </button>
+            </div>
+          </div>
+
+          <!-- Body Type Filter -->
+          <div class="space-y-2.5 pt-4 border-t border-slate-800">
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="car" class="w-4 h-4 text-emerald-400"></i> Body Style
+            </label>
+            <div class="grid grid-cols-2 gap-1.5">
+              <button type="button" onclick="SearchFilter.setBodyTypeFilter('all', this)" class="body-filter-btn py-1.5 px-2 text-[11px] font-semibold rounded-lg bg-sky-600 text-white border border-sky-500 transition-all">
+                All Types
+              </button>
+              <button type="button" onclick="SearchFilter.setBodyTypeFilter('SUV', this)" class="body-filter-btn py-1.5 px-2 text-[11px] font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                SUV
+              </button>
+              <button type="button" onclick="SearchFilter.setBodyTypeFilter('Sedan', this)" class="body-filter-btn py-1.5 px-2 text-[11px] font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                Sedan
+              </button>
+              <button type="button" onclick="SearchFilter.setBodyTypeFilter('Hatchback', this)" class="body-filter-btn py-1.5 px-2 text-[11px] font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                Hatchback
+              </button>
+              <button type="button" onclick="SearchFilter.setBodyTypeFilter('MUV', this)" class="body-filter-btn py-1.5 px-2 text-[11px] font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                MUV (7-Str)
+              </button>
+              <button type="button" onclick="SearchFilter.setBodyTypeFilter('Luxury', this)" class="body-filter-btn py-1.5 px-2 text-[11px] font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all">
+                Luxury
+              </button>
+            </div>
+          </div>
+
+          <!-- Brand Filter Select -->
+          <div class="space-y-2.5 pt-4 border-t border-slate-800">
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="tag" class="w-4 h-4 text-indigo-400"></i> Car Brand
+            </label>
+            <select id="brand-filter-select" onchange="SearchFilter.setBrandFilter(this.value)"
+              class="w-full bg-slate-900 border border-slate-700 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white outline-none">
+              <option value="all">All Brands (Tata, Mahindra, Hyundai...)</option>
+            </select>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- MAIN CAR GRID -->
+      <section class="lg:col-span-9 space-y-6">
+        
+        <!-- Controls Bar -->
+        <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 border border-slate-800">
+          <div class="flex items-center gap-2.5">
+            <span id="cars-count-badge" class="text-sm font-bold text-white">Loading cars...</span>
+            <span class="text-xs text-slate-500">•</span>
+            <span class="text-xs text-slate-400">Prices in Indian Rupees (₹ Ex-Showroom)</span>
+          </div>
+
+          <!-- Sorting -->
+          <div class="flex items-center gap-2 text-xs">
+            <span class="text-slate-400">Sort by:</span>
+            <select id="sort-by-select" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white font-semibold outline-none cursor-pointer">
+              <option value="popularity">Popularity & Rating</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="newest">Newest Launches</option>
+              <option value="rating">Top Safety & Rating</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Car Cards Grid -->
+        <div id="car-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <!-- Loaded dynamically via search_filter.js -->
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. Authentication Modal (Login / Register / Forgot Password) -->
+  <div id="auth-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+    <div id="auth-modal-content" class="w-full max-w-md glass-modal rounded-3xl p-6 sm:p-8 shadow-2xl animate-scaleUp">
+      <!-- Injected by auth.js -->
+    </div>
+  </div>
+
+  <!-- 2. Car Detail Modal (Specs, 360 Colors, On-Road Price in Rupees, EMI, Reviews) -->
+  <div id="car-detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+    <div class="w-full max-w-4xl glass-modal rounded-3xl p-6 sm:p-8 shadow-2xl my-auto animate-scaleUp max-h-[90vh] overflow-y-auto">
+      <div id="car-detail-content">
+        <!-- Injected by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Test Drive Booking Modal -->
+  <div id="test-drive-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+    <div class="w-full max-w-lg glass-modal rounded-3xl p-6 sm:p-8 shadow-2xl animate-scaleUp">
+      <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-6">
+        <div>
+          <h3 id="td-modal-car-title" class="text-xl font-bold text-white">Book Free Test Drive</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Experience the vehicle at your nearest dealership or home</p>
+        </div>
+        <button onclick="App.closeTestDrive()" class="p-2 text-slate-400 hover:text-white rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="App.handleTestDriveSubmit(event)" class="space-y-4">
+        <input type="hidden" id="td-car-id">
+        <input type="hidden" id="td-car-name">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
+          <input type="text" id="td-fullname" required placeholder="e.g. Rajesh Kumar" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Phone Number</label>
+            <input type="tel" id="td-phone" required placeholder="+91 98765 43210" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+            <input type="email" id="td-email" required placeholder="rajesh@example.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">City</label>
+            <select id="td-city" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none">
+              <option value="Delhi">Delhi NCR</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Bengaluru">Bengaluru</option>
+              <option value="Chennai">Chennai</option>
+              <option value="Hyderabad">Hyderabad</option>
+              <option value="Kolkata">Kolkata</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Date</label>
+            <input type="date" id="td-date" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Time Slot</label>
+            <select id="td-time" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none">
+              <option value="10:00 AM - 12:00 PM">10:00 AM - 12:00 PM</option>
+              <option value="12:00 PM - 02:00 PM">12:00 PM - 02:00 PM</option>
+              <option value="02:00 PM - 04:00 PM">02:00 PM - 04:00 PM</option>
+              <option value="04:00 PM - 06:00 PM">04:00 PM - 06:00 PM</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-sky-600/30 transition-all flex items-center justify-center gap-2 mt-2">
+          <span>Confirm Test Drive</span>
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Side-by-Side Car Comparison Modal -->
+  <div id="compare-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+    <div class="w-full max-w-5xl glass-modal rounded-3xl p-6 sm:p-8 shadow-2xl my-auto animate-scaleUp max-h-[90vh] overflow-y-auto">
+      <div id="compare-modal-content">
+        <!-- Injected by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="bg-slate-950 border-t border-slate-900 py-12 text-xs text-slate-500 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8 text-slate-400">
+        <div>
+          <h5 class="font-bold text-white mb-3">Popular Brands in India</h5>
+          <ul class="space-y-1.5">
+            <li><a href="#catalog-section" onclick="SearchFilter.setBrandFilter('Tata')" class="hover:text-sky-400">Tata Motors</a></li>
+            <li><a href="#catalog-section" onclick="SearchFilter.setBrandFilter('Mahindra')" class="hover:text-sky-400">Mahindra</a></li>
+            <li><a href="#catalog-section" onclick="SearchFilter.setBrandFilter('Hyundai')" class="hover:text-sky-400">Hyundai India</a></li>
+            <li><a href="#catalog-section" onclick="SearchFilter.setBrandFilter('Maruti Suzuki')" class="hover:text-sky-400">Maruti Suzuki</a></li>
+            <li><a href="#catalog-section" onclick="SearchFilter.setBrandFilter('Toyota')" class="hover:text-sky-400">Toyota</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="font-bold text-white mb-3">Fuel & Body Types</h5>
+          <ul class="space-y-1.5">
+            <li><a href="#catalog-section" onclick="SearchFilter.setFuelFilter('Electric')" class="hover:text-sky-400">Electric Vehicles (EV)</a></li>
+            <li><a href="#catalog-section" onclick="SearchFilter.setFuelFilter('Hybrid')" class="hover:text-sky-400">Strong Hybrids</a></li>
+            <li><a href="#catalog-section" onclick="SearchFilter.setFuelFilter('CNG')" class="hover:text-sky-400">CNG Cars</a></li>
+            <li><a href="#catalog-section" onclick="SearchFilter.setBodyTypeFilter('SUV')" class="hover:text-sky-400">SUVs & Coupes</a></li>
+            <li><a href="#catalog-section" onclick="SearchFilter.setBodyTypeFilter('Sedan')" class="hover:text-sky-400">Sedans</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="font-bold text-white mb-3">AI & Smart Features</h5>
+          <ul class="space-y-1.5">
+            <li><a href="#hero-lens-section" class="hover:text-sky-400">Car Lens AI (Image Detector)</a></li>
+            <li><a href="#hero-lens-section" class="hover:text-sky-400">Used Car Price Estimator</a></li>
+            <li><a href="#catalog-section" class="hover:text-sky-400">On-Road Price in ₹ (RTO + Tax)</a></li>
+            <li><a href="#catalog-section" class="hover:text-sky-400">Interactive Loan EMI Calculator</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="font-bold text-white mb-3">About AutoWale</h5>
+          <p class="leading-relaxed text-slate-400">
+            AutoWale is a modern CarWale-style full-stack automotive portal equipped with real-time multi-filtering, 2024–2026 car specs in Indian Rupees, and AI visual car valuation.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p>© 2026 AutoWale AI Portal. All Rights Reserved. Built with FastAPI & Modern Web Technologies.</p>
+        <div class="flex items-center gap-4 text-slate-400">
+          <span>Indian Rupees (₹) Ex-Showroom & On-Road Estimator</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/cars_data.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/emi_calc.js"></script>
+  <script src="/js/search_filter.js"></script>
+  <script src="/js/car_lens.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
